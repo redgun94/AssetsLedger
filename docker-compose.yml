@@ -1,0 +1,15 @@
+services:
+  postgres:
+    image: postgres:16
+    container_name: proofoffunds-db
+    environment:
+      POSTGRES_DB: proofoffunds
+      POSTGRES_USER: proofoffunds
+      POSTGRES_PASSWORD: proofoffunds
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+volumes:
+  pgdata:
