@@ -2,8 +2,6 @@ e# AssetsLedger — Proof of Funds API
 
 REST API built with **Java** and **Spring Boot** to verify proof of funds and track client assets in mortgage lending workflows.
 
-This is a portfolio project grounded in real domain experience: in mortgage lending, underwriters need to confirm that a borrower has enough verified assets for down payment, closing costs, and reserves. AssetsLedger models that process as a backend service: registering clients and their accounts, recording asset statements, and calculating whether verified funds meet the requirements of a loan.
-
 > 🚧 **Status:** in active development. See the [Roadmap](#roadmap) for what is done and what is next.
 
 ---

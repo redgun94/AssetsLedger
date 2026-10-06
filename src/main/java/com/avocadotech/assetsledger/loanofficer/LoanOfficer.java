@@ -1,4 +1,5 @@
 package com.avocadotech.assetsledger.loanofficer;
+import com.avocadotech.assetsledger.company.Company;
 import com.avocadotech.assetsledger.user.User;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -25,7 +26,12 @@ public class LoanOfficer {
     @JoinColumn(name = "user_id",nullable = false,unique = true)
     private User user;
 
-    @Column(unique = true)
+    @ManyToOne(optional = false,fetch = FetchType.LAZY)
+    @JoinColumn(name = "company_id")
+    private Company company;
+
+
+    @Column(name = "nmls", unique = true)
     private String nmls;
 
     @Enumerated(EnumType.STRING)

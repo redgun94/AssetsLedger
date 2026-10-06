@@ -44,8 +44,8 @@ public class User {
     private LocalDateTime createdAt;
 
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private Account_Status account_status ;
+    @Column(name = "account_status", nullable = false)
+    private Account_Status accountStatus ;
 
     public enum Role{
         ADMIN,USER

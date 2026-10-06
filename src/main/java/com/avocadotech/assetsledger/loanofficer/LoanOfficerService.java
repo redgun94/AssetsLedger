@@ -5,6 +5,9 @@ import com.avocadotech.assetsledger.loanofficer.dto.LoanOfficerResponseDto;
 import com.avocadotech.assetsledger.loanofficer.dto.LoanOfficerUpdateRequestDto;
 import com.avocadotech.assetsledger.loanofficer.exception.LoanOfficerFoundException;
 import com.avocadotech.assetsledger.loanofficer.exception.NmlsAlreadyExistsException;
+import com.avocadotech.assetsledger.user.User;
+import com.avocadotech.assetsledger.user.UserRepository;
+import com.avocadotech.assetsledger.user.exception.UserNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
 
@@ -16,9 +19,11 @@ import java.util.UUID;
 public class LoanOfficerService {
 
     private final LoanOfficerRepository loanOfficerRepository;
+    private final UserRepository userRepository;
 
-    public LoanOfficerService(LoanOfficerRepository loanOfficerRepository) {
+    public LoanOfficerService(LoanOfficerRepository loanOfficerRepository, UserRepository userRepository, UserRepository userRepository1) {
         this.loanOfficerRepository = loanOfficerRepository;
+        this.userRepository = userRepository1;
     }
 
     public Optional<LoanOfficer> findByNmls(String nmls){
@@ -32,9 +37,11 @@ public class LoanOfficerService {
         if (loanOfficerRepository.existsByNmls(request.nmls())){
             throw new NmlsAlreadyExistsException(request.nmls());
         }
+        User user = userRepository.findById(request.userId()).orElseThrow(()->new UserNotFoundException(request.userId()));
         LoanOfficer loanOfficer = new LoanOfficer();
         loanOfficer.setNmls(request.nmls());
         loanOfficer.setOfficerType(request.officerType());
+        loanOfficer.setUser(user);
 
         LoanOfficer saved = loanOfficerRepository.save(loanOfficer);
 
