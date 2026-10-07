@@ -1,5 +1,8 @@
 package com.avocadotech.assetsledger.loanofficer;
 
+import com.avocadotech.assetsledger.company.Company;
+import com.avocadotech.assetsledger.company.CompanyRepository;
+import com.avocadotech.assetsledger.company.exception.CompanyNotFoundException;
 import com.avocadotech.assetsledger.loanofficer.dto.LoanOfficerRequestDto;
 import com.avocadotech.assetsledger.loanofficer.dto.LoanOfficerResponseDto;
 import com.avocadotech.assetsledger.loanofficer.dto.LoanOfficerUpdateRequestDto;
@@ -20,10 +23,12 @@ public class LoanOfficerService {
 
     private final LoanOfficerRepository loanOfficerRepository;
     private final UserRepository userRepository;
+    private final CompanyRepository companyRepository;
 
-    public LoanOfficerService(LoanOfficerRepository loanOfficerRepository, UserRepository userRepository, UserRepository userRepository1) {
+    public LoanOfficerService(LoanOfficerRepository loanOfficerRepository, UserRepository userRepository, UserRepository userRepository1, CompanyRepository companyRepository) {
         this.loanOfficerRepository = loanOfficerRepository;
         this.userRepository = userRepository1;
+        this.companyRepository = companyRepository;
     }
 
     public Optional<LoanOfficer> findByNmls(String nmls){
@@ -37,11 +42,13 @@ public class LoanOfficerService {
         if (loanOfficerRepository.existsByNmls(request.nmls())){
             throw new NmlsAlreadyExistsException(request.nmls());
         }
+        Company company = companyRepository.findByCompanyNmls(request.companyNmls()).orElseThrow(()-> new CompanyNotFoundException(request.companyNmls()));
         User user = userRepository.findById(request.userId()).orElseThrow(()->new UserNotFoundException(request.userId()));
         LoanOfficer loanOfficer = new LoanOfficer();
         loanOfficer.setNmls(request.nmls());
         loanOfficer.setOfficerType(request.officerType());
         loanOfficer.setUser(user);
+        loanOfficer.setCompany(company);
 
         LoanOfficer saved = loanOfficerRepository.save(loanOfficer);
 

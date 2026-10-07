@@ -10,4 +10,5 @@ public interface LoanOfficerRepository extends JpaRepository<LoanOfficer, UUID> 
     boolean existsByNmls(String nmls);
 
 
+    Object existsByUserId(UUID userId);
 }

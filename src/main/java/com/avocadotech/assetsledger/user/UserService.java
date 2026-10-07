@@ -46,7 +46,7 @@ public class UserService {
         user.setName(request.name());
         user.setLastName(request.last_name());
         user.setPhone(request.phone());
-        user.setRole(User.Role.ADMIN);
+        user.setRole(User.Role.USER);
         user.setAccountStatus(User.Account_Status.PENDING_PROFILE);
 
         User saved = userRepository.save(user);
@@ -88,4 +88,5 @@ public class UserService {
         user.setPhone(updatedUser.phone());
 
     }
+
 }

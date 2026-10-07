@@ -10,5 +10,4 @@ public interface CompanyRepository extends JpaRepository<Company, UUID> {
     boolean existsByCompanyNmls(String nmls);
     Optional<Company> findByCompanyNmls(String nmls);
     List<Company> findByNameContainingIgnoreCase(String name);
-
 }

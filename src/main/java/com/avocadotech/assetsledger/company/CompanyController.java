@@ -2,6 +2,7 @@ package com.avocadotech.assetsledger.company;
 
 import com.avocadotech.assetsledger.company.dto.CompanyRequestDto;
 import com.avocadotech.assetsledger.company.dto.CompanyResponseDto;
+import com.avocadotech.assetsledger.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
@@ -17,6 +18,7 @@ import java.util.UUID;
 
 
 public class CompanyController {
+
     CompanyService companyService;
 
     public CompanyController(CompanyService companyService) {
@@ -40,5 +42,17 @@ public class CompanyController {
     public ResponseEntity<CompanyResponseDto>getById(@PathVariable String nmls){
         CompanyResponseDto companyResponseDto = companyService.findByNmls(nmls);
         return ResponseEntity.ok(companyResponseDto);
+    }
+
+    @DeleteMapping("/{nmls}")
+    public ResponseEntity<Void> deleteCompany(@PathVariable String nmls){
+        companyService.deleteCompany(nmls);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{nmls}")
+    public ResponseEntity<CompanyResponseDto> updateCompany(@PathVariable String nmls, @RequestBody CompanyRequestDto newRequestBody){
+        CompanyResponseDto companyUpdatedResponseDto = companyService.updateByNmls(nmls,newRequestBody);
+        return ResponseEntity.ok(companyUpdatedResponseDto);
     }
 }
