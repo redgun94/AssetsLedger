@@ -1,4 +1,4 @@
-package com.avocadotech.assetsledger.common;
+package com.avocadotech.assetsledger.common.address;
 
 import jakarta.persistence.Embeddable;
 import lombok.Getter;

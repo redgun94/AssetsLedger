@@ -8,6 +8,7 @@ import com.avocadotech.assetsledger.loanofficer.dto.LoanOfficerResponseDto;
 import com.avocadotech.assetsledger.loanofficer.dto.LoanOfficerUpdateRequestDto;
 import com.avocadotech.assetsledger.loanofficer.exception.LoanOfficerFoundException;
 import com.avocadotech.assetsledger.loanofficer.exception.NmlsAlreadyExistsException;
+import com.avocadotech.assetsledger.loanofficer.exception.NmlsRequiredException;
 import com.avocadotech.assetsledger.user.User;
 import com.avocadotech.assetsledger.user.UserRepository;
 import com.avocadotech.assetsledger.user.exception.UserNotFoundException;
@@ -39,17 +40,26 @@ public class LoanOfficerService {
     }
 
     public LoanOfficerResponseDto create(@Valid LoanOfficerRequestDto request){
+
+        if(request.officerType() == OfficerType.LOAN_OFFICER && request.nmls() == null){
+            throw new NmlsRequiredException("Loan Officer without a valid NMLS is not allowed ");
+        }
+        User user = userRepository.findById(request.userId()).orElseThrow(()->new UserNotFoundException(request.userId()));
+
+        if (loanOfficerRepository.existsByUserId(request.userId())){
+            throw new LoanOfficerFoundException(user.getId());
+        }
         if (loanOfficerRepository.existsByNmls(request.nmls())){
             throw new NmlsAlreadyExistsException(request.nmls());
         }
+
         Company company = companyRepository.findByCompanyNmls(request.companyNmls()).orElseThrow(()-> new CompanyNotFoundException(request.companyNmls()));
-        User user = userRepository.findById(request.userId()).orElseThrow(()->new UserNotFoundException(request.userId()));
         LoanOfficer loanOfficer = new LoanOfficer();
         loanOfficer.setNmls(request.nmls());
         loanOfficer.setOfficerType(request.officerType());
         loanOfficer.setUser(user);
         loanOfficer.setCompany(company);
-
+        user.setAccountStatus(User.Account_Status.ACTIVE);
         LoanOfficer saved = loanOfficerRepository.save(loanOfficer);
 
         return new LoanOfficerResponseDto(saved.getNmls(),saved.getOfficerType());

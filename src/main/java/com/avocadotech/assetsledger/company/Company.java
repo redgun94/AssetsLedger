@@ -1,7 +1,6 @@
 package com.avocadotech.assetsledger.company;
 
-import com.avocadotech.assetsledger.common.Address;
-import com.avocadotech.assetsledger.loanofficer.LoanOfficer;
+import com.avocadotech.assetsledger.common.address.Address;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

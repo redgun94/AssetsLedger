@@ -1,4 +1,4 @@
-package com.avocadotech.assetsledger.common;
+package com.avocadotech.assetsledger.common.address;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

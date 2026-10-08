@@ -1,7 +1,7 @@
 package com.avocadotech.assetsledger.company;
 
-import com.avocadotech.assetsledger.common.AddressDto;
-import com.avocadotech.assetsledger.common.AddressMapper;
+import com.avocadotech.assetsledger.common.address.AddressDto;
+import com.avocadotech.assetsledger.common.address.AddressMapper;
 import com.avocadotech.assetsledger.company.dto.CompanyRequestDto;
 import com.avocadotech.assetsledger.company.dto.CompanyResponseDto;
 import com.avocadotech.assetsledger.company.exception.CompanyAlreadyExistsException;
@@ -32,7 +32,9 @@ public class CompanyService {
         Company company = new Company();
         company.setCompanyNmls(requestDto.nmls());
         company.setName(requestDto.companyName());
+        company.setCompanyType(requestDto.companyType());
         company.setAddress(AddressMapper.toEtity(requestDto.address()));
+        companyRepository.save(company);
         return companyToResponseDto(company);
     }
 
@@ -57,9 +59,7 @@ public class CompanyService {
 
     @Transactional
     public void deleteCompany(String nmls){
-        if(!companyRepository.existsByCompanyNmls(nmls)){
-            throw new CompanyNotFoundException(nmls);
-        }
+
         Company company = companyRepository.findByCompanyNmls(nmls).orElseThrow(()-> new CompanyNotFoundException(nmls));
         companyRepository.delete(company);
     }

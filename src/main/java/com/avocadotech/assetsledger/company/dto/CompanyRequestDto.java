@@ -1,7 +1,6 @@
 package com.avocadotech.assetsledger.company.dto;
 
-import com.avocadotech.assetsledger.common.Address;
-import com.avocadotech.assetsledger.common.AddressDto;
+import com.avocadotech.assetsledger.common.address.AddressDto;
 import com.avocadotech.assetsledger.company.CompanyType;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
