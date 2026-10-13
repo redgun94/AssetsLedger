@@ -1,6 +1,8 @@
 package com.avocadotech.assetsledger.loanofficer.exception;
 
-public class ProfileAlreadyCompletedException extends RuntimeException {
+import com.avocadotech.assetsledger.common.exception.ConflictException;
+
+public class ProfileAlreadyCompletedException extends ConflictException {
     public ProfileAlreadyCompletedException(String message) {
         super(message);
     }

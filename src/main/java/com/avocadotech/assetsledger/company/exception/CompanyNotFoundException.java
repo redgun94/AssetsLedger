@@ -1,6 +1,8 @@
 package com.avocadotech.assetsledger.company.exception;
 
-public class CompanyNotFoundException extends RuntimeException {
+import com.avocadotech.assetsledger.common.exception.ResourceNotFoundException;
+
+public class CompanyNotFoundException extends ResourceNotFoundException {
     public CompanyNotFoundException(String message) {
         super(message);
     }

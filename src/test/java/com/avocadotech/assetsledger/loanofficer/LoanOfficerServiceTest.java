@@ -4,10 +4,9 @@ import com.avocadotech.assetsledger.company.Company;
 import com.avocadotech.assetsledger.company.CompanyRepository;
 import com.avocadotech.assetsledger.company.exception.CompanyNotFoundException;
 import com.avocadotech.assetsledger.loanofficer.dto.LoanOfficerRequestDto;
-import com.avocadotech.assetsledger.loanofficer.exception.LoanOfficerFoundException;
+import com.avocadotech.assetsledger.loanofficer.exception.LoanOfficerNotFoundException;
 import com.avocadotech.assetsledger.loanofficer.exception.NmlsAlreadyExistsException;
 import com.avocadotech.assetsledger.loanofficer.exception.NmlsRequiredException;
-import com.avocadotech.assetsledger.loanofficer.exception.ProfileAlreadyCompletedException;
 import com.avocadotech.assetsledger.user.User;
 import com.avocadotech.assetsledger.user.exception.UserNotFoundException;
 import com.avocadotech.assetsledger.user.UserRepository;
@@ -146,7 +145,7 @@ class LoanOfficerServiceTest {
         when(loanOfficerRepository.existsByUserId(userId)).thenReturn(true);
 
         assertThatThrownBy(() -> loanOfficerService.create(request))
-                .isInstanceOf(LoanOfficerFoundException.class);
+                .isInstanceOf(LoanOfficerNotFoundException.class);
 
         verify(loanOfficerRepository, never()).save(any());
     }

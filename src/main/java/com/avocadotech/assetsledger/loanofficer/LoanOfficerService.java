@@ -6,7 +6,7 @@ import com.avocadotech.assetsledger.company.exception.CompanyNotFoundException;
 import com.avocadotech.assetsledger.loanofficer.dto.LoanOfficerRequestDto;
 import com.avocadotech.assetsledger.loanofficer.dto.LoanOfficerResponseDto;
 import com.avocadotech.assetsledger.loanofficer.dto.LoanOfficerUpdateRequestDto;
-import com.avocadotech.assetsledger.loanofficer.exception.LoanOfficerFoundException;
+import com.avocadotech.assetsledger.loanofficer.exception.LoanOfficerNotFoundException;
 import com.avocadotech.assetsledger.loanofficer.exception.NmlsAlreadyExistsException;
 import com.avocadotech.assetsledger.loanofficer.exception.NmlsRequiredException;
 import com.avocadotech.assetsledger.user.User;
@@ -47,7 +47,7 @@ public class LoanOfficerService {
         User user = userRepository.findById(request.userId()).orElseThrow(()->new UserNotFoundException(request.userId()));
 
         if (loanOfficerRepository.existsByUserId(request.userId())){
-            throw new LoanOfficerFoundException(user.getId());
+            throw new LoanOfficerNotFoundException(user.getId());
         }
         if (loanOfficerRepository.existsByNmls(request.nmls())){
             throw new NmlsAlreadyExistsException(request.nmls());
@@ -67,7 +67,7 @@ public class LoanOfficerService {
     }
     public LoanOfficerResponseDto findById(UUID id){
         return loanOfficerRepository.findById(id).map(this::toResponseDto).orElseThrow(()->
-                new LoanOfficerFoundException(id));
+                new LoanOfficerNotFoundException(id));
     }
     private LoanOfficerResponseDto toResponseDto(LoanOfficer loanOfficer){
         return new LoanOfficerResponseDto(loanOfficer.getNmls(),loanOfficer.getOfficerType());
@@ -78,7 +78,7 @@ public class LoanOfficerService {
     }
 
     public LoanOfficerResponseDto updateById(UUID id, LoanOfficerUpdateRequestDto request) {
-        LoanOfficer loanOfficer = loanOfficerRepository.findById(id).orElseThrow(()-> new LoanOfficerFoundException(id));
+        LoanOfficer loanOfficer = loanOfficerRepository.findById(id).orElseThrow(()-> new LoanOfficerNotFoundException(id));
         toNewUpdateLoanOfficer(loanOfficer,request);
         LoanOfficer saved = loanOfficerRepository.save(loanOfficer);
         return toResponseDto(saved);
