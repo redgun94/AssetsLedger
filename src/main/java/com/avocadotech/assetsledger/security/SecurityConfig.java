@@ -1,4 +1,4 @@
-package com.avocadotech.assetsledger.config;
+package com.avocadotech.assetsledger.security;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -44,7 +44,7 @@ public class UserService {
         user.setEmail(request.email());
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setName(request.name());
-        user.setLastName(request.last_name());
+        user.setLastName(request.lastName());
         user.setPhone(request.phone());
         user.setRole(User.Role.USER);
         user.setAccountStatus(User.Account_Status.PENDING_PROFILE);

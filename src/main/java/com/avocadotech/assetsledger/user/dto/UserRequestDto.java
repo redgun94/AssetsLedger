@@ -10,6 +10,6 @@ public record UserRequestDto(
         @NotBlank @Email String email,
         @NotBlank @Size(min = 8) String password,
         @NotBlank String name,
-        @NotBlank String last_name,
+        @NotBlank String lastName,
         @NotBlank String phone
 ) {}

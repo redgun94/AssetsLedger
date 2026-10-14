@@ -74,6 +74,10 @@
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-security-oauth2-resource-server</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-devtools</artifactId>
             <scope>runtime</scope>
             <optional>true</optional>
@@ -91,11 +95,6 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa-test</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-data-rest-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -133,7 +132,7 @@
             <artifactId>spring-boot-starter-webservices-test</artifactId>
             <scope>test</scope>
         </dependency>
-    </dependencies>
+            </dependencies>
     <dependencyManagement>
         <dependencies>
             <dependency>
