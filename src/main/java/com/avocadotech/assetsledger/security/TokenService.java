@@ -2,7 +2,8 @@ package com.avocadotech.assetsledger.security;
 
 
 import com.avocadotech.assetsledger.auth.dto.AuthResponseDto;
-import lombok.Value;
+import org.springframework.beans.factory.annotation.Value;
+
 import org.springframework.security.oauth2.jose.jws.MacAlgorithm;
 import org.springframework.security.oauth2.jwt.JwsHeader;
 import org.springframework.security.oauth2.jwt.JwtClaimsSet;

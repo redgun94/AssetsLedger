@@ -3,6 +3,8 @@ package com.avocadotech.assetsledger.user;
 import com.avocadotech.assetsledger.user.dto.UserRequestDto;
 import com.avocadotech.assetsledger.user.dto.UserResponseDto;
 import com.avocadotech.assetsledger.user.dto.UserUpdateRequestDto;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.web.bind.annotation.*;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -48,5 +50,10 @@ public class UserController {
         public ResponseEntity<UserResponseDto> updateById(@RequestBody UserUpdateRequestDto request, @PathVariable UUID id){
             UserResponseDto userUpdated = userService.updateById(request,id);
             return ResponseEntity.ok(userUpdated);
+    }
+    @GetMapping("/me")
+    public ResponseEntity<UserResponseDto> getMe(@AuthenticationPrincipal Jwt jwt){
+        UUID id = UUID.fromString(jwt.getSubject());
+        return ResponseEntity.ok(userService.getMe(id));
     }
 }

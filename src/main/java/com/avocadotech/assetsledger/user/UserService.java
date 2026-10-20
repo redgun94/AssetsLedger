@@ -1,5 +1,6 @@
 package com.avocadotech.assetsledger.user;
 
+import com.avocadotech.assetsledger.common.exception.InvalidSessionException;
 import com.avocadotech.assetsledger.user.dto.UserRequestDto;
 import com.avocadotech.assetsledger.user.dto.UserResponseDto;
 import com.avocadotech.assetsledger.user.dto.UserUpdateRequestDto;
@@ -7,6 +8,7 @@ import com.avocadotech.assetsledger.user.exception.EmailAlreadyExistsException;
 import com.avocadotech.assetsledger.user.exception.UserNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -89,4 +91,13 @@ public class UserService {
 
     }
 
+    public UserResponseDto getMe(UUID id){
+
+        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id));
+
+        if(user.getAccountStatus() == User.Account_Status.SUSPENSE){
+            throw new InvalidSessionException(user.getId());
+        }
+        return toResponseDto(user);
+    }
 }
