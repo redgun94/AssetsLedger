@@ -1,5 +1,6 @@
 package com.avocadotech.assetsledger.client;
 
+import com.avocadotech.assetsledger.loanofficer.LoanOfficer;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -20,7 +21,11 @@ public class Client {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    @Column(name = "email", nullable = false, unique = true, length = 150)
+    @ManyToOne(optional = false, fetch = FetchType.LAZY)
+    @JoinColumn(name = "loan_officer_id")
+    private LoanOfficer loanOfficer;
+
+    @Column(name = "email", nullable = false, unique = false, length = 150)
     private String email;
 
     @Column(name = "first_name", nullable = false,length = 120)
