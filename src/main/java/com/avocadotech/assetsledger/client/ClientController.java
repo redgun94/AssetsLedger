@@ -50,4 +50,11 @@ public class ClientController {
         UUID userId = UUID.fromString(jwt.getSubject());
         return ResponseEntity.ok(clientService.updateClient(clientId, userId, clientRequestDto));
     }
+
+    @DeleteMapping("/{clientId}")
+    public ResponseEntity<Void> deleteClient(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID clientId){
+        UUID userId = UUID.fromString(jwt.getSubject());
+        clientService.deleteClient(clientId, userId);
+        return ResponseEntity.noContent().build();
+    }
 }

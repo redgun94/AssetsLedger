@@ -77,6 +77,14 @@ public class ClientService {
         return returnClientResponseDto(saved);
     }
 
+    @Transactional
+    public void deleteClient(UUID clientId, UUID userId) {
+        LoanOfficer loanOfficer = loanOfficerService.findProfileOf(userId);
+        Client client = clientRepository.findByIdAndLoanOfficerId(clientId, loanOfficer.getId())
+                .orElseThrow(() -> new ClientNotFoundException(clientId));
+        clientRepository.delete(client);
+    }
+
     private ClientResponseDto returnClientResponseDto(Client client) {
         return new ClientResponseDto(
                 client.getId(),
