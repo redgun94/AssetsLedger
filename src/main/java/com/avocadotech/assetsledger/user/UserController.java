@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/users")
+@RequestMapping("/api/v1/me")
 public class UserController {
 
     UserService userService;
@@ -36,7 +36,7 @@ public class UserController {
                 UserResponseDto userById = userService.getById(id);
         return ResponseEntity.ok(userById);
     }
-    @GetMapping
+    @GetMapping("/all")
     public ResponseEntity<List<UserResponseDto>>getAll(){
         return ResponseEntity.ok(userService.findAll());
     }
@@ -51,9 +51,5 @@ public class UserController {
             UserResponseDto userUpdated = userService.updateById(request,id);
             return ResponseEntity.ok(userUpdated);
     }
-    @GetMapping("/me")
-    public ResponseEntity<UserResponseDto> getMe(@AuthenticationPrincipal Jwt jwt){
-        UUID id = UUID.fromString(jwt.getSubject());
-        return ResponseEntity.ok(userService.getMe(id));
-    }
+
 }

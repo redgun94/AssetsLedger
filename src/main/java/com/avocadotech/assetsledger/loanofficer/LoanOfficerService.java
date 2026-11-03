@@ -1,5 +1,6 @@
 package com.avocadotech.assetsledger.loanofficer;
 
+import com.avocadotech.assetsledger.common.exception.InvalidSessionException;
 import com.avocadotech.assetsledger.company.Company;
 import com.avocadotech.assetsledger.company.CompanyRepository;
 import com.avocadotech.assetsledger.company.exception.CompanyNotFoundException;
@@ -9,11 +10,13 @@ import com.avocadotech.assetsledger.loanofficer.dto.LoanOfficerUpdateRequestDto;
 import com.avocadotech.assetsledger.loanofficer.exception.LoanOfficerNotFoundException;
 import com.avocadotech.assetsledger.loanofficer.exception.NmlsAlreadyExistsException;
 import com.avocadotech.assetsledger.loanofficer.exception.NmlsRequiredException;
+import com.avocadotech.assetsledger.loanofficer.exception.ProfileAlreadyCompletedException;
 import com.avocadotech.assetsledger.user.User;
 import com.avocadotech.assetsledger.user.UserRepository;
 import com.avocadotech.assetsledger.user.exception.UserNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -39,7 +42,7 @@ public class LoanOfficerService {
         return loanOfficerRepository.existsByNmls(nmls);
     }
 
-    public LoanOfficerResponseDto create(@Valid LoanOfficerRequestDto request){
+    /*public LoanOfficerResponseDto create(@Valid LoanOfficerRequestDto request){
 
         if(request.officerType() == OfficerType.LOAN_OFFICER && request.nmls() == null){
             throw new NmlsRequiredException("Loan Officer without a valid NMLS is not allowed ");
@@ -64,7 +67,7 @@ public class LoanOfficerService {
 
         return new LoanOfficerResponseDto(saved.getNmls(),saved.getOfficerType());
 
-    }
+    }*/
     public LoanOfficerResponseDto findById(UUID id){
         return loanOfficerRepository.findById(id).map(this::toResponseDto).orElseThrow(()->
                 new LoanOfficerNotFoundException(id));
@@ -77,9 +80,9 @@ public class LoanOfficerService {
         return loanOfficerRepository.findAll().stream().map(this::toResponseDto).toList();
     }
 
-    public LoanOfficerResponseDto updateById(UUID id, LoanOfficerUpdateRequestDto request) {
-        LoanOfficer loanOfficer = loanOfficerRepository.findById(id).orElseThrow(()-> new LoanOfficerNotFoundException(id));
-        toNewUpdateLoanOfficer(loanOfficer,request);
+    public LoanOfficerResponseDto updateByUserId(UUID userId, LoanOfficerUpdateRequestDto request) {
+        LoanOfficer loanOfficer = findProfileOf(userId);
+        toNewUpdateLoanOfficer(loanOfficer, request);
         LoanOfficer saved = loanOfficerRepository.save(loanOfficer);
         return toResponseDto(saved);
     }
@@ -87,5 +90,49 @@ public class LoanOfficerService {
     private void toNewUpdateLoanOfficer(LoanOfficer loanOfficer, LoanOfficerUpdateRequestDto request) {
         loanOfficer.setNmls(request.nmls());
         loanOfficer.setOfficerType(request.officerType());
+    }
+
+    @Transactional
+    public LoanOfficerResponseDto createForUser(UUID userId, LoanOfficerRequestDto request) {
+        String nmls = normalizeNmls(request.nmls());
+        if (request.officerType() == OfficerType.LOAN_OFFICER && nmls == null) {
+            throw new NmlsRequiredException("NMLS is required");
+        }
+
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new InvalidSessionException(userId));
+
+        if (loanOfficerRepository.existsByUserId(userId)) {
+            throw new ProfileAlreadyCompletedException(userId);
+        }
+        if (nmls != null && loanOfficerRepository.existsByNmls(nmls)) {
+            throw new NmlsAlreadyExistsException(nmls);
+        }
+        Company company = companyRepository.findByCompanyNmls(request.companyNmls())
+                .orElseThrow(() -> new CompanyNotFoundException(request.companyNmls()));
+
+        LoanOfficer loanOfficer = new LoanOfficer();
+        loanOfficer.setUser(user);
+        loanOfficer.setCompany(company);
+        loanOfficer.setNmls(nmls);
+        loanOfficer.setOfficerType(request.officerType());
+        user.setAccountStatus(User.Account_Status.ACTIVE);
+
+        return toResponseDto(loanOfficerRepository.save(loanOfficer));
+    }
+
+    public LoanOfficerResponseDto getByUserId(UUID userId) {
+        return toResponseDto(findProfileOf(userId));
+    }
+
+    public LoanOfficer findProfileOf(UUID userId) {
+        return loanOfficerRepository.findByUserId(userId)
+                .orElseThrow(() -> new LoanOfficerNotFoundException(userId));   // 404: aún no completó el onboarding
+    }
+    private String normalizeNmls(String nmls) {
+        if (nmls == null || nmls.isBlank()) {
+            return null;
+        }
+        return nmls.trim();
     }
 }

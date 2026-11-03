@@ -10,6 +10,5 @@ import java.util.UUID;
 public record LoanOfficerRequestDto(
         @Size(max = 20) String nmls,
         @NotNull OfficerType officerType,
-        @NotNull UUID userId,
         @NotBlank String companyNmls
         ) {}

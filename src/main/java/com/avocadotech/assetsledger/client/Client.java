@@ -22,7 +22,7 @@ public class Client {
     private UUID id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "loan_officer_id")
+    @JoinColumn(name = "loan_officer")
     private LoanOfficer loanOfficer;
 
     @Column(name = "email", nullable = false, unique = false, length = 150)
@@ -43,15 +43,6 @@ public class Client {
 
   /*  @Column(name = "ssn_number",nullable = false, unique = true, length = 9)
     private  String ssn;*/
-    @
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "kyc_report_id")
-    private KycVerification KycVerification;
-
-    @OneToMany(fetch = FetchType.LAZY)
-    @JoinColumn(name = "assets_report_id")
-    private AssetVerification AssetVerification;
 
     @Enumerated(EnumType.STRING)
     @Column(name = "state",nullable = false)
@@ -59,6 +50,6 @@ public class Client {
 
 
     public enum ServiceStatus{
-        LINK_SENT, NEEDS_REVIEW,VERIFIED, LINK_EXPIRED
+        NO_ACTION,LINK_SENT, NEEDS_REVIEW,VERIFIED, LINK_EXPIRED
     }
 }

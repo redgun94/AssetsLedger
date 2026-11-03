@@ -11,5 +11,5 @@ public interface LoanOfficerRepository extends JpaRepository<LoanOfficer, UUID> 
 
     boolean existsByUserId(UUID userId);
 
-    Object findByUserId(UUID userId);
+    Optional<LoanOfficer> findByUserId(UUID userId);
 }
