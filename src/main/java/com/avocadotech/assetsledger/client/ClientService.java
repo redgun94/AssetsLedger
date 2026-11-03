@@ -56,6 +56,27 @@ public class ClientService {
         return clientRepository.findAllByLoanOfficerId(loanOfficer.getId()).stream().map(this::returnClientResponseDto).toList();
     }
 
+    @Transactional
+    public ClientResponseDto updateClient(UUID clientId, UUID userId, ClientRequestDto clientRequestDto) {
+        LoanOfficer loanOfficer = loanOfficerService.findProfileOf(userId);
+        Client client = clientRepository.findByIdAndLoanOfficerId(clientId, loanOfficer.getId())
+                .orElseThrow(() -> new ClientNotFoundException(clientId));
+
+        String email = clientRequestDto.email().trim().toLowerCase();
+        if (!email.equals(client.getEmail())
+                && clientRepository.existsByLoanOfficerIdAndEmail(loanOfficer.getId(), email)) {
+            throw new ClientEmailAlreadyExistsException(email);
+        }
+
+        client.setFirstName(clientRequestDto.firstName());
+        client.setLastName(clientRequestDto.lastName());
+        client.setEmail(email);
+        client.setPhone(clientRequestDto.phone());
+        Client saved = clientRepository.save(client);
+
+        return returnClientResponseDto(saved);
+    }
+
     private ClientResponseDto returnClientResponseDto(Client client) {
         return new ClientResponseDto(
                 client.getId(),

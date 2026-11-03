@@ -43,4 +43,11 @@ public class ClientController {
         List<ClientResponseDto> listClients = clientService.getMyClients(userId);
         return ResponseEntity.ok(listClients);
     }
+
+    @PutMapping("/{clientId}")
+    public ResponseEntity<ClientResponseDto> updateClient(@AuthenticationPrincipal Jwt jwt, @PathVariable UUID clientId,
+                                                          @Valid @RequestBody ClientRequestDto clientRequestDto){
+        UUID userId = UUID.fromString(jwt.getSubject());
+        return ResponseEntity.ok(clientService.updateClient(clientId, userId, clientRequestDto));
+    }
 }
