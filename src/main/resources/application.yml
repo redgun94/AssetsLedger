@@ -5,7 +5,7 @@ spring:
     password: proofoffunds
 jpa:
   hibernate:
-  ddl-auto: validate   # el esquema lo maneja Flyway, no Hibernate
+    ddl-auto: validate   # el esquema lo maneja Flyway, no Hibernate
   show-sql: true
 flyway:
   enabled: true

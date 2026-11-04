@@ -22,7 +22,7 @@ public class Client {
     private UUID id;
 
     @ManyToOne(optional = false, fetch = FetchType.LAZY)
-    @JoinColumn(name = "loan_officer")
+    @JoinColumn(name = "loan_officer_id", nullable = false)
     private LoanOfficer loanOfficer;
 
     @Column(name = "email", nullable = false, unique = false, length = 150)
@@ -45,7 +45,7 @@ public class Client {
     private  String ssn;*/
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "state",nullable = false)
+    @Column(name = "service_status",nullable = false)
     private ServiceStatus serviceStatus;
 
 

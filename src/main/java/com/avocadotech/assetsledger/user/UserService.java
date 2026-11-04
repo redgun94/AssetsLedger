@@ -39,11 +39,12 @@ public class UserService {
     }
 
     public UserResponseDto create(@Valid UserRequestDto request){
-        if(userRepository.existsByEmail(request.email())){
-            throw new EmailAlreadyExistsException(request.email());
+        String email = request.email().toLowerCase();
+        if(userRepository.existsByEmail(email)){
+            throw new EmailAlreadyExistsException(email);
         }
         User user =  new User();
-        user.setEmail(request.email());
+        user.setEmail(email);
         user.setPassword(passwordEncoder.encode(request.password()));
         user.setName(request.name());
         user.setLastName(request.lastName());
