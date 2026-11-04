@@ -14,12 +14,12 @@ import java.util.List;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/api/v1/company")
+@RequestMapping("/api/v1/companies")
 
 
 public class CompanyController {
 
-    CompanyService companyService;
+    private final CompanyService companyService;
 
     public CompanyController(CompanyService companyService) {
 
@@ -39,7 +39,7 @@ public class CompanyController {
     }
 
     @GetMapping("/{nmls}")
-    public ResponseEntity<CompanyResponseDto>getById(@PathVariable String nmls){
+    public ResponseEntity<CompanyResponseDto>getByNmls(@PathVariable String nmls){
         CompanyResponseDto companyResponseDto = companyService.findByNmls(nmls);
         return ResponseEntity.ok(companyResponseDto);
     }
@@ -51,7 +51,7 @@ public class CompanyController {
     }
 
     @PutMapping("/{nmls}")
-    public ResponseEntity<CompanyResponseDto> updateCompany(@PathVariable String nmls, @RequestBody CompanyRequestDto newRequestBody){
+    public ResponseEntity<CompanyResponseDto> updateCompany(@PathVariable String nmls, @Valid @RequestBody CompanyRequestDto newRequestBody){
         CompanyResponseDto companyUpdatedResponseDto = companyService.updateByNmls(nmls,newRequestBody);
         return ResponseEntity.ok(companyUpdatedResponseDto);
     }

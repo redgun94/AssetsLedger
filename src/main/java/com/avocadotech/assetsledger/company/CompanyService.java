@@ -18,24 +18,22 @@ import java.util.List;
 public class CompanyService {
 
     private final CompanyRepository companyRepository;
-    private final UserRepository userRepository;
 
     public CompanyService(CompanyRepository companyRepository, UserRepository userRepository) {
         this.companyRepository = companyRepository;
-        this.userRepository = userRepository;
     }
 
-    public CompanyResponseDto create(@Valid CompanyRequestDto requestDto) {
-        if (companyRepository.existsByCompanyNmls(requestDto.nmls())){
-            throw new CompanyAlreadyExistsException(requestDto.nmls());
-        }
-        Company company = new Company();
-        company.setCompanyNmls(requestDto.nmls());
-        company.setName(requestDto.companyName());
-        company.setCompanyType(requestDto.companyType());
-        company.setAddress(AddressMapper.toEtity(requestDto.address()));
-        companyRepository.save(company);
-        return companyToResponseDto(company);
+    public CompanyResponseDto create(CompanyRequestDto requestDto) {
+        String nmls = requestDto.nmls().trim();
+        companyRepository.findByCompanyNmls(nmls).ifPresent(existing ->{
+                    throw new CompanyAlreadyExistsException(companyToResponseDto(existing));});
+        Company newCompany = new Company();
+        newCompany.setCompanyNmls(nmls);
+        newCompany.setName(requestDto.companyName());
+        newCompany.setCompanyType(requestDto.companyType());
+        newCompany.setAddress(AddressMapper.toEntity(requestDto.address()));
+        Company companySaved = companyRepository.save(newCompany);
+        return companyToResponseDto(companySaved);
     }
 
     private CompanyResponseDto companyToResponseDto (Company company){
@@ -69,7 +67,7 @@ public class CompanyService {
         company.setName(newCompanyData.companyName());
         company.setCompanyNmls(newCompanyData.nmls());
         company.setCompanyType(newCompanyData.companyType());
-        company.setAddress(AddressMapper.toEtity(newCompanyData.address()));
+        company.setAddress(AddressMapper.toEntity(newCompanyData.address()));
         return companyToResponseDto(companyRepository.save(company));
     }
 }

@@ -2,7 +2,7 @@ package com.avocadotech.assetsledger.common.address;
 
 public class AddressMapper {
 
-    public static Address toEtity(AddressDto addCompanyDto){
+    public static Address toEntity(AddressDto addCompanyDto){
         if(addCompanyDto == null){
             return null;
         }

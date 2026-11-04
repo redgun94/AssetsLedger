@@ -1,4 +1,5 @@
 package com.avocadotech.assetsledger.common.exception;
+import com.avocadotech.assetsledger.company.exception.CompanyAlreadyExistsException;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +66,13 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler  {
     @ExceptionHandler(InvalidSessionException.class)
     public ProblemDetail handleInvalidSessionException(){
         return problem(HttpStatus.UNAUTHORIZED,"Suspended", "This account is currently suspended");
+    }
+
+    @ExceptionHandler(CompanyAlreadyExistsException.class)
+    public ProblemDetail handleCompanyAlreadyExists(CompanyAlreadyExistsException exec){
+        ProblemDetail pd = problem(HttpStatus.CONFLICT, "Conflict", exec.getMessage());
+        pd.setProperty("existingCompany", exec.getCompanyResponseDto());
+        return pd;
     }
     private ProblemDetail problem(HttpStatus status, String title, String detail){
         ProblemDetail pd = ProblemDetail.forStatusAndDetail(status, detail);
