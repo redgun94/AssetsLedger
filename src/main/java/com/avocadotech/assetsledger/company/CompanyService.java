@@ -5,9 +5,7 @@ import com.avocadotech.assetsledger.common.address.AddressMapper;
 import com.avocadotech.assetsledger.company.dto.CompanyRequestDto;
 import com.avocadotech.assetsledger.company.dto.CompanyResponseDto;
 import com.avocadotech.assetsledger.company.exception.CompanyAlreadyExistsException;
-import com.avocadotech.assetsledger.user.UserRepository;
 import jakarta.transaction.Transactional;
-import jakarta.validation.Valid;
 import com.avocadotech.assetsledger.company.exception.CompanyNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -19,7 +17,7 @@ public class CompanyService {
 
     private final CompanyRepository companyRepository;
 
-    public CompanyService(CompanyRepository companyRepository, UserRepository userRepository) {
+    public CompanyService(CompanyRepository companyRepository) {
         this.companyRepository = companyRepository;
     }
 
@@ -65,7 +63,7 @@ public class CompanyService {
     public CompanyResponseDto updateByNmls(String nmls, CompanyRequestDto newCompanyData) {
         Company company = companyRepository.findByCompanyNmls(nmls).orElseThrow(()-> new CompanyNotFoundException(nmls));
         company.setName(newCompanyData.companyName());
-        company.setCompanyNmls(newCompanyData.nmls());
+        company.setCompanyNmls(newCompanyData.nmls().trim());
         company.setCompanyType(newCompanyData.companyType());
         company.setAddress(AddressMapper.toEntity(newCompanyData.address()));
         return companyToResponseDto(companyRepository.save(company));
