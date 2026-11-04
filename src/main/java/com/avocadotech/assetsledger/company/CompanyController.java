@@ -10,7 +10,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.avocadotech.assetsledger.company.CompanyService;
 
-import java.util.List;
 import java.util.UUID;
 
 @RestController
@@ -32,27 +31,9 @@ public class CompanyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(companyResponseDto);
     }
 
-    @GetMapping()
-    public ResponseEntity<List<CompanyResponseDto>>getAll(){
-        List<CompanyResponseDto> companyList = companyService.findAll();
-        return ResponseEntity.ok(companyList);
-    }
-
     @GetMapping("/{nmls}")
     public ResponseEntity<CompanyResponseDto>getByNmls(@PathVariable String nmls){
         CompanyResponseDto companyResponseDto = companyService.findByNmls(nmls);
         return ResponseEntity.ok(companyResponseDto);
-    }
-
-    @DeleteMapping("/{nmls}")
-    public ResponseEntity<Void> deleteCompany(@PathVariable String nmls){
-        companyService.deleteCompany(nmls);
-        return ResponseEntity.noContent().build();
-    }
-
-    @PutMapping("/{nmls}")
-    public ResponseEntity<CompanyResponseDto> updateCompany(@PathVariable String nmls, @Valid @RequestBody CompanyRequestDto newRequestBody){
-        CompanyResponseDto companyUpdatedResponseDto = companyService.updateByNmls(nmls,newRequestBody);
-        return ResponseEntity.ok(companyUpdatedResponseDto);
     }
 }
