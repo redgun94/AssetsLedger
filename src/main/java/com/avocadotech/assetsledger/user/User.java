@@ -50,7 +50,7 @@ public class User {
     @Column(name = "deleted_email")
     private String deletedEmail;
 
-    @Column(name = "deleted_at"
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
 
