@@ -50,18 +50,20 @@ public class CompanyService {
 
 
     public CompanyResponseDto findByNmls(String nmls) {
-        return companyToResponseDto(companyRepository.findByCompanyNmls(nmls).orElseThrow(()-> new CompanyNotFoundException("No Company found with this id " + nmls)));
+        String normalizedNmls = nmls.trim();
+        return companyToResponseDto(companyRepository.findByCompanyNmls(normalizedNmls).orElseThrow(()-> new CompanyNotFoundException("No Company found with this NMLS " + normalizedNmls)));
     }
 
     @Transactional
     public void deleteCompany(String nmls){
-
-        Company company = companyRepository.findByCompanyNmls(nmls).orElseThrow(()-> new CompanyNotFoundException(nmls));
+        String normalizedNmls = nmls.trim();
+        Company company = companyRepository.findByCompanyNmls(normalizedNmls).orElseThrow(()-> new CompanyNotFoundException(normalizedNmls));
         companyRepository.delete(company);
     }
 
     public CompanyResponseDto updateByNmls(String nmls, CompanyRequestDto newCompanyData) {
-        Company company = companyRepository.findByCompanyNmls(nmls).orElseThrow(()-> new CompanyNotFoundException(nmls));
+        String normalizedNmls = nmls.trim();
+        Company company = companyRepository.findByCompanyNmls(normalizedNmls).orElseThrow(()-> new CompanyNotFoundException(normalizedNmls));
         company.setName(newCompanyData.companyName());
         company.setCompanyNmls(newCompanyData.nmls().trim());
         company.setCompanyType(newCompanyData.companyType());
