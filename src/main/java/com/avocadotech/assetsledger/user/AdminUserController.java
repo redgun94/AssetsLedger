@@ -2,11 +2,10 @@ package com.avocadotech.assetsledger.user;
 
 
 import com.avocadotech.assetsledger.user.dto.UserResponseDto;
+import com.avocadotech.assetsledger.user.dto.UserUpdateRequestDto;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -29,5 +28,15 @@ public class AdminUserController {
     @GetMapping("/{id}")
     public ResponseEntity<UserResponseDto> getById(@PathVariable UUID id){
         return ResponseEntity.ok(userService.getById(id));
+    }
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable UUID id){
+        userService.delete(id);
+        return ResponseEntity.noContent().build();
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<UserResponseDto> updateById(@Valid @RequestBody UserUpdateRequestDto request, @PathVariable UUID id){
+        UserResponseDto userUpdated = userService.updateById(request,id);
+        return ResponseEntity.ok(userUpdated);
     }
 }

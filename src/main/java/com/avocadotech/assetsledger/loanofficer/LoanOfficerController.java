@@ -3,6 +3,7 @@ package com.avocadotech.assetsledger.loanofficer;
 import com.avocadotech.assetsledger.loanofficer.dto.LoanOfficerRequestDto;
 import com.avocadotech.assetsledger.loanofficer.dto.LoanOfficerResponseDto;
 import com.avocadotech.assetsledger.loanofficer.dto.LoanOfficerUpdateRequestDto;
+import com.avocadotech.assetsledger.security.CurrentUser;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,22 +27,22 @@ public class LoanOfficerController {
     @PostMapping
     public ResponseEntity<LoanOfficerResponseDto> create(@AuthenticationPrincipal Jwt jwt,
                                                          @Valid @RequestBody LoanOfficerRequestDto request) {
-        LoanOfficerResponseDto created = loanOfficerService.createForUser(userId(jwt), request);
+        LoanOfficerResponseDto created = loanOfficerService.createForUser(CurrentUser.toId(jwt), request);
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @GetMapping
     public ResponseEntity<LoanOfficerResponseDto> getMine(@AuthenticationPrincipal Jwt jwt) {
-        return ResponseEntity.ok(loanOfficerService.getByUserId(userId(jwt)));
+        return ResponseEntity.ok(loanOfficerService.getByUserId(CurrentUser.toId(jwt)));
     }
 
     @PutMapping
     public ResponseEntity<LoanOfficerResponseDto> updateMine(@AuthenticationPrincipal Jwt jwt,
                                                              @Valid @RequestBody LoanOfficerUpdateRequestDto request) {
-        return ResponseEntity.ok(loanOfficerService.updateByUserId(userId(jwt), request));
+        return ResponseEntity.ok(loanOfficerService.updateByUserId(CurrentUser.toId(jwt), request));
     }
 
-    private UUID userId(Jwt jwt) {
+/*    private UUID userId(Jwt jwt) {
         return UUID.fromString(jwt.getSubject());
-    }
+    }*/
 }

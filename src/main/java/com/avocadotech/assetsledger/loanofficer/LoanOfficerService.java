@@ -100,7 +100,7 @@ public class LoanOfficerService {
         }
 
         User user = userRepository.findById(userId)
-                .orElseThrow(() -> new InvalidSessionException(userId));
+                .orElseThrow(() -> new InvalidSessionException());
 
         if (loanOfficerRepository.existsByUserId(userId)) {
             throw new ProfileAlreadyCompletedException(userId);

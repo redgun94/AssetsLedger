@@ -97,7 +97,7 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id));
 
         if(user.getAccountStatus() == User.Account_Status.SUSPENSE){
-            throw new InvalidSessionException(user.getId());
+            throw new InvalidSessionException();
         }
         return toResponseDto(user);
     }
