@@ -32,7 +32,7 @@ public class TokenService {
                 .subject(user.getId().toString())
                 .issuedAt(now)
                 .expiresAt(now.plus(expiration))
-                .claim("role", user.getRole())
+                .claim("ROLE", user.getRole())
                 .build();
 
         String token = jwtEncoder

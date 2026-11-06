@@ -47,12 +47,19 @@ public class User {
     @Column(name = "account_status", nullable = false)
     private Account_Status accountStatus ;
 
+    @Column(name = "deleted_email")
+    private String deletedEmail;
+
+    @Column(name = "deleted_at"
+    private LocalDateTime deletedAt;
+
+
     public enum Role{
         ADMIN,USER
     }
 
     public enum Account_Status{
-        PENDING_PROFILE, ACTIVE, SUSPENSE
+        PENDING_PROFILE, ACTIVE, SUSPENDED, DELETED
     }
 
 }

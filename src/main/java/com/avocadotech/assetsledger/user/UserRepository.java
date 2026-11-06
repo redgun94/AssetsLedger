@@ -17,5 +17,8 @@ public interface  UserRepository extends JpaRepository<User, UUID>{
 
     boolean existsByPhone(String phone);
 
+    boolean existsByIdAndAccountStatus(UUID id, User.Account_Status accountStatus);
+
+    List<User> findByAccountStatusNot(User.Account_Status accountStatus);
 
 }

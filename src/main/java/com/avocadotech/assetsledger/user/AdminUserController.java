@@ -31,7 +31,7 @@ public class AdminUserController {
     }
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUser(@PathVariable UUID id){
-        userService.delete(id);
+        userService.softDelete(id);
         return ResponseEntity.noContent().build();
     }
     @PutMapping("/{id}")

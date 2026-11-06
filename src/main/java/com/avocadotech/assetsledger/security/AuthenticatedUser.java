@@ -24,7 +24,7 @@ public class AuthenticatedUser implements UserDetails {
         this.email = user.getEmail();
         this.passwordHash = user.getPassword();
         this.role = user.getRole();
-        this.enabled = user.getAccountStatus() != User.Account_Status.SUSPENSE;
+        this.enabled = !((user.getAccountStatus()  == User.Account_Status.SUSPENDED ) | (user.getAccountStatus() == User.Account_Status.DELETED));
     }
 
     @Override

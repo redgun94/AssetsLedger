@@ -34,6 +34,9 @@ public class LoanOfficer {
     @Column(name = "nmls", unique = true)
     private String nmls;
 
+    @Column(name = "deleted_nmls")
+    private String deletedNmls;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "officer_type", nullable = false)
     private OfficerType officerType;

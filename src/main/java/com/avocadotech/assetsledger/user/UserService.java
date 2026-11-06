@@ -1,16 +1,22 @@
 package com.avocadotech.assetsledger.user;
 
+import com.avocadotech.assetsledger.common.exception.BusinessRuleException;
 import com.avocadotech.assetsledger.common.exception.InvalidSessionException;
+import com.avocadotech.assetsledger.loanofficer.LoanOfficerRepository;
 import com.avocadotech.assetsledger.user.dto.UserRequestDto;
 import com.avocadotech.assetsledger.user.dto.UserResponseDto;
 import com.avocadotech.assetsledger.user.dto.UserUpdateRequestDto;
 import com.avocadotech.assetsledger.user.exception.EmailAlreadyExistsException;
+import com.avocadotech.assetsledger.user.exception.UserAlreadyDeletedException;
 import com.avocadotech.assetsledger.user.exception.UserNotFoundException;
 import jakarta.validation.Valid;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
+import java.util.ConcurrentModificationException;
 import java.util.Optional;
 import java.util.List;
 import java.util.UUID;
@@ -20,10 +26,12 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final LoanOfficerRepository loanOfficerRepository;
 
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, LoanOfficerRepository loanOfficerRepository) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.loanOfficerRepository = loanOfficerRepository;
     }
 
     public Optional<User> findByEmail(String email){
@@ -57,16 +65,29 @@ public class UserService {
         return new UserResponseDto(saved.getId(), saved.getName(), saved.getLastName(), saved.getEmail());
 
     }
-    public void delete(UUID id){
-        if(!userRepository.existsById(id)){
-            throw new UserNotFoundException(id);
+    @Transactional
+    public void softDelete(UUID id){
+        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id));
+        if(user.getAccountStatus() == User.Account_Status.DELETED){
+            throw new UserAlreadyDeletedException(id);
         }
-        userRepository.deleteById(id);
+        user.setDeletedEmail(user.getEmail());
+        user.setEmail(id + "@deleted.invalid");
+        user.setDeletedAt(LocalDateTime.now());
+        user.setAccountStatus(User.Account_Status.DELETED);
+        loanOfficerRepository.findByUserId(id).ifPresent(profile -> {
+            profile.setDeletedNmls(profile.getNmls());
+            profile.setNmls(null);
+        });
     }
 
     public UserResponseDto getById(UUID id){
+        return toResponseDto(findNotDeleted(id));
+    }
+
+    private User findNotDeleted(UUID id){
         return userRepository.findById(id)
-                .map(this::toResponseDto)
+                .filter(user -> user.getAccountStatus() != User.Account_Status.DELETED)
                 .orElseThrow(()-> new UserNotFoundException(id));
     }
 
@@ -75,11 +96,11 @@ public class UserService {
     }
 
     public List<UserResponseDto> findAll() {
-        return userRepository.findAll().stream().map(this::toResponseDto).toList();
+        return userRepository.findByAccountStatusNot(User.Account_Status.DELETED).stream().map(this::toResponseDto).toList();
     }
 
     public UserResponseDto updateById(UserUpdateRequestDto request, UUID id) {
-        User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id));
+        User user = findNotDeleted(id);
         toNewUpdatedUser(user,request);
         User saved = userRepository.save(user);
         return toResponseDto(saved);
@@ -95,8 +116,11 @@ public class UserService {
     public UserResponseDto getMe(UUID id){
 
         User user = userRepository.findById(id).orElseThrow(()-> new UserNotFoundException(id));
+        if(user.getAccountStatus() == User.Account_Status.DELETED){
+            throw new InvalidSessionException();
+        }
 
-        if(user.getAccountStatus() == User.Account_Status.SUSPENSE){
+        if(user.getAccountStatus() == User.Account_Status.SUSPENDED){
             throw new InvalidSessionException();
         }
         return toResponseDto(user);
