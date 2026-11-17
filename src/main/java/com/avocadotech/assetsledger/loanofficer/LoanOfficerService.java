@@ -29,9 +29,9 @@ public class LoanOfficerService {
     private final UserRepository userRepository;
     private final CompanyRepository companyRepository;
 
-    public LoanOfficerService(LoanOfficerRepository loanOfficerRepository, UserRepository userRepository, UserRepository userRepository1, CompanyRepository companyRepository) {
+    public LoanOfficerService(LoanOfficerRepository loanOfficerRepository, UserRepository userRepository, CompanyRepository companyRepository) {
         this.loanOfficerRepository = loanOfficerRepository;
-        this.userRepository = userRepository1;
+        this.userRepository = userRepository;
         this.companyRepository = companyRepository;
     }
 
