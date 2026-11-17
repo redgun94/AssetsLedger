@@ -27,7 +27,7 @@ public class CompanyService {
                     throw new CompanyAlreadyExistsException(companyToResponseDto(existing));});
         Company newCompany = new Company();
         newCompany.setCompanyNmls(nmls);
-        newCompany.setName(requestDto.companyName());
+        newCompany.setName(normalizeName(requestDto.companyName()));
         newCompany.setCompanyType(requestDto.companyType());
         newCompany.setAddress(AddressMapper.toEntity(requestDto.address()));
         Company companySaved = companyRepository.save(newCompany);
@@ -64,10 +64,19 @@ public class CompanyService {
     public CompanyResponseDto updateByNmls(String nmls, CompanyRequestDto newCompanyData) {
         String normalizedNmls = nmls.trim();
         Company company = companyRepository.findByCompanyNmls(normalizedNmls).orElseThrow(()-> new CompanyNotFoundException(normalizedNmls));
-        company.setName(newCompanyData.companyName());
+        company.setName(normalizeName(newCompanyData.companyName()));
         company.setCompanyNmls(newCompanyData.nmls().trim());
         company.setCompanyType(newCompanyData.companyType());
         company.setAddress(AddressMapper.toEntity(newCompanyData.address()));
         return companyToResponseDto(companyRepository.save(company));
+    }
+
+    public List<CompanyResponseDto> findByName(String name) {
+        return companyRepository.findByNameContainingIgnoreCase(normalizeName(name))
+                .stream().map(this::companyToResponseDto).toList();
+    }
+
+    private static String normalizeName(String name) {
+        return name.trim().replaceAll("\\s+", " ");
     }
 }
