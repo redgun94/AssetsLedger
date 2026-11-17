@@ -24,12 +24,12 @@ public class AuthenticatedUser implements UserDetails {
         this.email = user.getEmail();
         this.passwordHash = user.getPassword();
         this.role = user.getRole();
-        this.enabled = !((user.getAccountStatus()  == User.Account_Status.SUSPENDED ) | (user.getAccountStatus() == User.Account_Status.DELETED));
+        this.enabled = !((user.getAccountStatus()  == User.Account_Status.SUSPENDED ) || (user.getAccountStatus() == User.Account_Status.DELETED));
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities(){
-        return List.of(new SimpleGrantedAuthority("Role_"+role));
+        return List.of(new SimpleGrantedAuthority("ROLE_" + role));
     }
     @Override public String getUsername() { return email; }
     @Override public String getPassword() { return passwordHash; }
